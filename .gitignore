@@ -1,5 +1,13 @@
 # This .gitignore file should be placed at the root of your Unity project directory
 #
+# Nico -- ignore 3d files
+*.blend
+*.blend1
+*.fbx
+# Ignore Packages folder 
+Packages/
+#
+#
 # Get latest from https://github.com/github/gitignore/blob/main/Unity.gitignore
 #
 /[Ll]ibrary/
