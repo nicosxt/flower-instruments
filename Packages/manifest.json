@@ -1,6 +1,8 @@
 {
   "dependencies": {
+    "com.meta.xr.mrutilitykit": "64.0.0",
     "com.meta.xr.sdk.core": "64.0.0",
+    "com.meta.xr.sdk.haptics": "64.0.0",
     "com.meta.xr.sdk.interaction": "64.0.0",
     "com.meta.xr.sdk.interaction.ovr.samples": "64.0.0",
     "com.meta.xr.sdk.platform": "64.0.0",

@@ -50,9 +50,12 @@ EditorBuildSettings:
   - enabled: 0
     path: Assets/Samples/Meta XR Interaction SDK OVR Samples/64.0.0/Example Scenes/ComprehensiveRigExample.unity
     guid: 2efe93cb8972cae439bfba2dcd4165f0
-  - enabled: 1
-    path: Assets/_nico/Scenes/VR_Test1.unity
+  - enabled: 0
+    path: Assets/_nico/Scenes/MR_Staging.unity
     guid: 4f53cc716d9ebec418fc03809b2360e8
+  - enabled: 1
+    path: Assets/_nico/Scenes/_FloridOddity.unity
+    guid: af9d22b78a3b8bd46a02760bba88ba51
   m_configObjects:
     Unity.XR.Oculus.Settings: {fileID: 11400000, guid: 8c0030b4b5984e7439a553df0cdd7dd2,
       type: 2}
