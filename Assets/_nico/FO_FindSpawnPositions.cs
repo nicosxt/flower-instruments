@@ -7,22 +7,18 @@ using static UnityEngine.GraphicsBuffer;
 
 public class FO_FindSpawnPositions : FindSpawnPositions
 {
-    //turn this script to a singleton with the name s
-    public static FO_FindSpawnPositions s;
+    public static FO_FindSpawnPositions s { get; private set; }
     private void Awake()
     {
-        if(s!=null && s!=this)
+        if (s == null)
         {
-            Destroy(this);
-        }else{
             s = this;
-            //DontDestroyOnLoad(this);
+            //DontDestroyOnLoad(gameObject);
         }
-        
-    }
-    public static FO_FindSpawnPositions GetInstance()
-    {
-        return s;
+        else if (s != this)
+        {
+            Destroy(gameObject);
+        }
     }
 
     private Transform cameraTransform;
@@ -33,18 +29,20 @@ public class FO_FindSpawnPositions : FindSpawnPositions
 
     public System.Collections.Generic.List<Vector3> spawnPositions = new System.Collections.Generic.List<Vector3>();
 
+
     
     private void Start()
     {
         cameraTransform = GameObject.FindWithTag("MainCamera").transform;
     }
 
+
     public void SpawnPositions()
     {
         Debug.Log("Span Position Called");
         var room = MRUK.Instance.GetCurrentRoom();
         if(room != null)
-            Debug.Log("GET ROOM");
+            Debug.Log("ROOM WAS SUCCESSFULLY GOTTEN");
         var minRadius = 0.2f;
 
         for (int i = 0; i < SpawnAmount; ++i)
