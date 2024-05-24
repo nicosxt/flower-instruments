@@ -4,6 +4,10 @@ using UnityEngine;
 using Meta.XR.MRUtilityKit; 
 using Oculus.Interaction;
 using Oculus.Interaction.Input;
+using UnityEngine.Events;
+
+[System.Serializable]
+public class UnityEventVector3 : UnityEvent<Vector3> {}
 public class FO_Raycast : MonoBehaviour
 {
     public static FO_Raycast s { get; private set; }
@@ -21,69 +25,96 @@ public class FO_Raycast : MonoBehaviour
     }
 
     [SerializeField]
-    public OVRHand leftHand;
+    public OVRHand hand;
     [SerializeField]
-    public OVRHand rightHand;
-    [SerializeField]
-    private OVRSkeleton leftHandSkeleton;
-    [SerializeField]
-    private OVRSkeleton rightHandSkeleton;
-    public Transform LeftLinePointer;
-    public Transform RightLinePointer;
+    private OVRSkeleton handSkeleton;
+
+    //RAYCASTING
+    public Transform LinePointer;
     private OVRSkeleton.BoneId indexTipBoneId = OVRSkeleton.BoneId.Hand_IndexTip;
     private OVRSkeleton.BoneId thumbRootBoneId = OVRSkeleton.BoneId.Hand_Thumb0;
     private OVRSkeleton.BoneId thumbTipBoneId = OVRSkeleton.BoneId.Hand_ThumbTip;
+    public GameObject raycastingPlane;
 
+    //HAND GESTURE DETECTION
+    public UnityEventVector3 OnPinchStart = new UnityEventVector3();
+    private bool pinchStart = false;
+    private Vector3 raycastTargetPos;
+    private float lerpAmount = 0.1f;
 
-    public GameObject leftHandHit, rightHandHit;
-    //private RoomMeshCollector roomMeshCollector;
-    // Start is called before the first frame update
+    public GameObject handHit;
+
     void Start()
     {
     }
 
-    // Update is called once per frame
     void Update()
     {
-        PerformRaycast(leftHandSkeleton, leftHandHit, LeftLinePointer);
-        PerformRaycast(rightHandSkeleton, rightHandHit, RightLinePointer);
+        PerformRaycast(handSkeleton, LinePointer);
+        handHit.transform.position = Vector3.Lerp(handHit.transform.position, raycastTargetPos, lerpAmount);
     }
 
-    void PerformRaycast(OVRSkeleton handSkeleton, GameObject hitObj, Transform linePointer)
+    void HandleHandGesture_Pinch(Vector3 _rayPosition){
+        if(hand.GetFingerIsPinching(OVRHand.HandFinger.Index)){
+            if(!pinchStart){
+                OnPinchStart.Invoke(_rayPosition);
+                pinchStart = true;
+            }
+        }
+        else{
+            pinchStart = false;
+        }
+    }
+
+    void PerformRaycast(OVRSkeleton skeleton, Transform linePointer)
     {
-        Transform indexTip = GetBoneTransform(handSkeleton, indexTipBoneId);
-        Transform thumbTip = GetBoneTransform(handSkeleton, thumbTipBoneId);
-        Transform thumbRoot = GetBoneTransform(handSkeleton, thumbRootBoneId);
+        Transform indexTip = GetBoneTransform(skeleton, indexTipBoneId);
+        Transform thumbTip = GetBoneTransform(skeleton, thumbTipBoneId);
+        Transform thumbRoot = GetBoneTransform(skeleton, thumbRootBoneId);
         if (indexTip != null && thumbTip != null && thumbRoot != null)
         {
             Vector3 medianTipPos = (indexTip.position + thumbTip.position) / 2;
             Vector3 pointingDirection = (medianTipPos - thumbRoot.position).normalized;
 
-            //Debug.Log("Bone is working!");
             AlignLinePointer(linePointer, thumbRoot.position, pointingDirection);
 
             Ray ray = new Ray(thumbRoot.position, pointingDirection);
             RaycastHit[] hits = Physics.RaycastAll(ray, 5000f);
 
-            foreach(RaycastHit hit in hits){
+            RaycastHit? closestHit = null;
+            float closestDistance = float.MaxValue;
+
+            raycastingPlane = null;
+            foreach (RaycastHit hit in hits)
+            {
                 if (hit.collider.name.Contains("EffectMesh"))
                 {
-                    hitObj.transform.position = hit.point;
+                    float distance = (hit.point - thumbRoot.position).sqrMagnitude;
+                    if (distance < closestDistance)
+                    {
+                        closestHit = hit;
+                        closestDistance = distance;
+                        raycastingPlane = hit.collider.gameObject;
+                    }
                 }
+            }
+
+            if (closestHit.HasValue)
+            {
+                raycastTargetPos = closestHit.Value.point;
+                HandleHandGesture_Pinch(closestHit.Value.point);
             }
         }
     }
 
-
     void AlignLinePointer(Transform linePointer, Vector3 pos, Vector3 dir){
-        
         linePointer.position = pos;
         linePointer.rotation = Quaternion.LookRotation(dir);
     }
 
-
     Transform GetBoneTransform(OVRSkeleton skeleton, OVRSkeleton.BoneId boneId)
     {
+        if(skeleton == null) return null;
         foreach (var bone in skeleton.Bones)
         {
             if (bone.Id == boneId)
@@ -93,25 +124,4 @@ public class FO_Raycast : MonoBehaviour
         }
         return null;
     }
-
-    // public void SetUpRaycasting(){
-    //     //for all the transforms in FO_GetXRData.s.mrAnchorTransforms, add the RayInteractable script to the object
-    //     foreach(Transform anchor in FO_GetXRData.s.mrAnchorTransforms){
-    //         anchor.gameObject.AddComponent<RayInteractable>();
-    //         //assign collider from child to Surface in RayInteractable
-    //         Collider collider = anchor.GetComponentInChildren<Collider>();
-    //         if(collider != null){
-    //             Debug.Log("Getting Colliders");
-    //             colliders.Add(collider);
-
-    //             ColliderSurface cs = collider.gameObject.AddComponent<ColliderSurface>();
-    //             cs._collider = collider;
-    //             // if(anchor.GetComponent<RayInteractable>() != null){
-    //             //     anchor.GetComponent<RayInteractable>().Surface = collider;
-    //             // }
-    //         }
-
-            
-    //     }
-    // }
 }

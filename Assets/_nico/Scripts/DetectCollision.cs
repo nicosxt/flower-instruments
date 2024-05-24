@@ -23,8 +23,8 @@ public class DetectCollision : MonoBehaviour
     // This method will be called when any child collider detects a collision with the HAND
     private void OnHandCollision(GameObject colliderObject)
     {
-        if(GetComponent<Instrument>()){
-            GetComponent<Instrument>().TriggerSound();
+        if(GetComponent<FO_InstrumentObject>()){
+            GetComponent<FO_InstrumentObject>().TriggerSound();
         }
     }
 }
