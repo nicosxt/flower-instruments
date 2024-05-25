@@ -26,7 +26,7 @@ public class FO_InstrumentManager : MonoBehaviour{
     // Start is called before the first frame update
     void Start()
     {
-        currentInstrumentPrefab = instrumentPrefabs[2];
+        currentInstrumentPrefab = instrumentPrefabs[0];
     }
 
     // Update is called once per frame

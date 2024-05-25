@@ -6,7 +6,8 @@ using UnityEngine.Events;
 public class H_DetectCollision : MonoBehaviour
 {
     public string targetStringContains = "Hand"; // name of target collision must contain this string
-    public UnityEvent collisionEnterEvent;
+    public UnityEvent collisionEnterEvent, collisionExitEvent;
+    public GameObject collidingObject;
     // Start is called before the first frame update
     void Start()
     {
@@ -21,9 +22,19 @@ public class H_DetectCollision : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
-        Debug.Log(gameObject.name + "COlliding with " + collision.gameObject.name);
+        //Debug.Log(gameObject.name + "Colliding with " + collision.gameObject.name);
         if(collision.gameObject.name.Contains(targetStringContains)){
+            collidingObject = collision.gameObject;
             collisionEnterEvent?.Invoke();
+        }
+    }
+
+    private void OnCollisionExit(Collision collision)
+    {
+        //Debug.Log(gameObject.name + "Colliding with " + collision.gameObject.name);
+        if(collision.gameObject == collidingObject){
+            collisionExitEvent?.Invoke();
+            collidingObject = null;
         }
     }
 }

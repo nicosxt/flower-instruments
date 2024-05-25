@@ -44,6 +44,8 @@ public class FO_Raycast : MonoBehaviour
 
     public GameObject handHit;
 
+    public string raycastDirection;
+
     void Start()
     {
     }
@@ -52,6 +54,15 @@ public class FO_Raycast : MonoBehaviour
     {
         PerformRaycast(handSkeleton, LinePointer);
         handHit.transform.position = Vector3.Lerp(handHit.transform.position, raycastTargetPos, lerpAmount);
+        if(raycastingPlane != null){
+            if(raycastDirection == "horizontal"){
+                //change handHit material color to red
+                handHit.GetComponent<MeshRenderer>().material.color = Color.red;
+            }else if(raycastDirection == "vertical"){
+                //change handHit material color to green
+                handHit.GetComponent<MeshRenderer>().material.color = Color.green;
+            }
+        }
     }
 
     void HandleHandGesture_Pinch(Vector3 _rayPosition){
@@ -95,6 +106,18 @@ public class FO_Raycast : MonoBehaviour
                         closestHit = hit;
                         closestDistance = distance;
                         raycastingPlane = hit.collider.gameObject;
+
+
+                        Vector3 directionUp = new Vector3(0f, 1f, 0f).normalized; // Ensure the direction is normalized
+                        float epsilon = 0.0005f; // Small tolerance value
+                        if (hit.normal.y > Mathf.Abs(hit.normal.x) && hit.normal.y > Mathf.Abs(hit.normal.z)) {
+                            raycastDirection = "horizontal";
+                            Debug.Log("DIRECTION IS HORIZONTAL");
+                        } else {
+                            raycastDirection = "vertical";
+                            Debug.Log("DIRECTION IS VERTICAL");
+                        }
+                        Debug.Log("HIT" + hit.collider.name + " " + raycastDirection + "normal is:" + hit.normal);
                     }
                 }
             }
@@ -102,7 +125,10 @@ public class FO_Raycast : MonoBehaviour
             if (closestHit.HasValue)
             {
                 raycastTargetPos = closestHit.Value.point;
-                HandleHandGesture_Pinch(closestHit.Value.point);
+
+                if(raycastDirection == "horizontal"){
+                    HandleHandGesture_Pinch(closestHit.Value.point);
+                }
             }
         }
     }

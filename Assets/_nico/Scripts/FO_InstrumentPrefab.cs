@@ -6,10 +6,11 @@ public class FO_InstrumentPrefab : MonoBehaviour
 {
     public GameObject[] instrumentObjects;
     public GameObject instrumentSelectorUI;
+
     // Start is called before the first frame update
     void Start()
     {
-        
+
     }
 
     // Update is called once per frame
@@ -38,4 +39,5 @@ public class FO_InstrumentPrefab : MonoBehaviour
         //     GameObject instrument = Instantiate(instrumentPrefabs[randomIndex], spawnPosition, Quaternion.identity);
         // }
     }
+
 }
