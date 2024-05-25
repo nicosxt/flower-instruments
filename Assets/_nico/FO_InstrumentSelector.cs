@@ -14,6 +14,7 @@ public class FO_InstrumentSelector : MonoBehaviour
     public Material selectedMat;
     public Material unselectedMat;
     // Start is called before the first frame update
+    //added one line
     void Start()
     {
         meshVisual = transform.GetChild(0).GetComponent<Renderer>();
@@ -34,7 +35,7 @@ public class FO_InstrumentSelector : MonoBehaviour
         {
             if (capsule.CapsuleRigidbody.gameObject == collision.gameObject)
             {
-                Debug.Log("COLLISION HAPPENS" + capsule.CapsuleRigidbody.gameObject.transform.parent.name); 
+                //Debug.Log("COLLISION HAPPENS" + capsule.CapsuleRigidbody.gameObject.transform.parent.name); 
                 collidingObject = collision.gameObject;
                 meshVisual.material = selectedMat;
                 FO_InstrumentManager.s.SetCurrentInstrument(myInstrumentPrefab);
