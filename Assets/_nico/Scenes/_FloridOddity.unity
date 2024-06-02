@@ -6685,55 +6685,6 @@ MonoBehaviour:
   _offset: {x: 0, y: 0, z: 0}
   _rotation: {x: 0, y: 0, z: 0, w: 1}
   _mirrorLeftRotation: 0
---- !u!1 &612139913
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 612139914}
-  - component: {fileID: 612139915}
-  m_Layer: 0
-  m_Name: Sequencer
-  m_TagString: Untagged
-  m_Icon: {fileID: 5721338939258241955, guid: 0000000000000000d000000000000000, type: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &612139914
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 612139913}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.025449015, y: 0.605, z: 0.023}
-  m_LocalScale: {x: 0.4615314, y: 0.4615314, z: 0.4615314}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 637066606}
-  m_RootOrder: -1
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &612139915
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 612139913}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cc8570daf164eaa49bd4ec932190eb76, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  barsPerLoop: 4
-  beatsPerBar: 4
-  beatLength: 0.1
-  barLength: 0
-  instrument: {fileID: 0}
 --- !u!1 &617807748
 GameObject:
   m_ObjectHideFlags: 0
@@ -6857,12 +6808,6 @@ SkinnedMeshRenderer:
     m_Center: {x: -0.00616638, y: -0.030066561, z: -0.020585023}
     m_Extent: {x: 0.033926036, y: 0.041736547, z: 0.054627255}
   m_DirtyAABB: 0
---- !u!4 &637066606 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 3427216433209864576, guid: 7b3307f1a8ecc1142b06a47b682aaffa,
-    type: 3}
-  m_PrefabInstance: {fileID: 763570062626260870}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &639770124
 GameObject:
   m_ObjectHideFlags: 0
@@ -7795,12 +7740,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: af8bab0cba21f08408d8000d5f48d298, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  beatVisualPrefab: {fileID: 141040086513101933, guid: e664dc68e21d4ab4a81f2f9acf636697,
+  beatPrefab: {fileID: 141040086513101933, guid: e664dc68e21d4ab4a81f2f9acf636697,
     type: 3}
   barPrefab: {fileID: 827126173977078496, guid: e5e48b4fa60d3dd4d92c1668fb28156f,
     type: 3}
-  sequencers:
-  - {fileID: 612139915}
+  sequencerPrefab: {fileID: 4062225801759176589, guid: 50f056aa2da9547448b6b3994f3420e8,
+    type: 3}
+  sequencers: []
+  playbackTime: 0
+  isPlaying: 0
+  bpm: 480
+  beatInterval: 0
+  sequencerVerticalSpacing: 0.1
+  sequencerBeatWidthSpacing: 0.1
 --- !u!1 &718648352
 GameObject:
   m_ObjectHideFlags: 0
@@ -21091,7 +21043,7 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 20
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1001 &763570062626260870
+--- !u!1001 &6768546040150203805
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
@@ -21107,7 +21059,7 @@ PrefabInstance:
     - target: {fileID: 3427216433209864576, guid: 7b3307f1a8ecc1142b06a47b682aaffa,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: -0.662
+      value: -1.251
       objectReference: {fileID: 0}
     - target: {fileID: 3427216433209864576, guid: 7b3307f1a8ecc1142b06a47b682aaffa,
         type: 3}
@@ -21117,7 +21069,7 @@ PrefabInstance:
     - target: {fileID: 3427216433209864576, guid: 7b3307f1a8ecc1142b06a47b682aaffa,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0.141
+      value: -0.936
       objectReference: {fileID: 0}
     - target: {fileID: 3427216433209864576, guid: 7b3307f1a8ecc1142b06a47b682aaffa,
         type: 3}
@@ -21154,11 +21106,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 4085855740548515374, guid: 7b3307f1a8ecc1142b06a47b682aaffa,
-        type: 3}
-      propertyPath: sequencer
-      value: 
-      objectReference: {fileID: 612139915}
     - target: {fileID: 7174551265368436212, guid: 7b3307f1a8ecc1142b06a47b682aaffa,
         type: 3}
       propertyPath: m_Name
@@ -21166,10 +21113,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
-    m_AddedGameObjects:
-    - targetCorrespondingSourceObject: {fileID: 3427216433209864576, guid: 7b3307f1a8ecc1142b06a47b682aaffa,
-        type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 612139914}
+    m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 7b3307f1a8ecc1142b06a47b682aaffa, type: 3}

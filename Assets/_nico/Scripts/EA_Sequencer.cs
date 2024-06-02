@@ -6,10 +6,27 @@ public class EA_Sequencer : MonoBehaviour
 {
     public int barsPerLoop = 4;//total amount of bars for this sequencer
     public int beatsPerBar = 4;
-    public float beatLength = 0.1f;
+    public float beatWidthSpacing;
     public float barLength;
-    List<EA_BarObject> bars = new List<EA_BarObject>();
+    List<EA_Bar> bars = new List<EA_Bar>();
+    List<Transform> sequenceLines = new List<Transform>();
     public EA_Instrument instrument;
+
+    //beats
+    public int currentBeat = 0;
+    private int lastBeat = -1;
+    public int currentBar = 0;
+    private int lastBar = 0;
+
+    //playback
+    public float playbackTime;
+    public float totalLoopTime;
+    public float globalPlaybackTime;
+    public GameObject playbackIndicator;
+    Vector3 startPos, endPos;
+
+    bool isInitialized = false;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -19,29 +36,76 @@ public class EA_Sequencer : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
     }
 
-    public void OnInitialized(EA_Instrument _instrument){
+    public void UpdateSequencer(){
+        if(!isInitialized) return;
+        globalPlaybackTime = EA_SequenceManager.s.playbackTime;
+        playbackTime = globalPlaybackTime % totalLoopTime;
+        SetPlaybackIndicator();
+        //total beat amount is barsPerLoop * beatsPerBar
+        //currentBeat is the current beat index
+        //set currentBeat as playbackTime / totalLoopTime
+        currentBeat = (int)(playbackTime / totalLoopTime * barsPerLoop * beatsPerBar);
+        currentBeat %= (barsPerLoop * beatsPerBar);
+
+        if(currentBeat != lastBeat){
+            OnBeat();
+            lastBeat = currentBeat;
+        }
+    }
+
+    public void OnInitialized(EA_Instrument _instrument, int _barsPerLoop, int _beatsPerBar, EA_InstrumentNode _NodeObject, int _NodeIndex){
         instrument = _instrument;
-        barLength = beatLength * beatsPerBar;
+        barsPerLoop = _barsPerLoop;
+        beatsPerBar = _beatsPerBar;
+        beatWidthSpacing = EA_SequenceManager.s.sequencerBeatWidthSpacing;
+        barLength = beatWidthSpacing * beatsPerBar;
+
+        //generate bars
         for(int i = 0; i < barsPerLoop; i++){
             GameObject bar = Instantiate(EA_SequenceManager.s.barPrefab, transform);
-            bar.transform.parent = transform;
-            bars.Add(bar.GetComponent<EA_BarObject>());
-            bars[i].OnInitialized(this, beatsPerBar, beatLength);
-            bar.transform.localPosition += new Vector3(0,0,barLength * i);
-
+            EA_Bar barScript = bar.GetComponent<EA_Bar>();
+            barScript.OnInitialized(this, beatsPerBar, beatWidthSpacing, i, _NodeObject, _NodeIndex);
+            bar.transform.localPosition = new Vector3(0,0,barLength * i);
+            bars.Add(barScript);
+            //when it's the last bar, get the barEnd's transform position from it
+            if(i == barsPerLoop - 1){
+                endPos = barScript.barEnd.transform.position;
+            }
         }
+        startPos = transform.position;
+        totalLoopTime = barsPerLoop * beatsPerBar * EA_SequenceManager.s.beatInterval;
+        isInitialized = true;
 
-        //after getting all the bar objects, offset their positions by half of total length of all the bars
-        foreach(EA_BarObject bar in bars){
-            bar.transform.localPosition -= new Vector3(0,0,barLength * barsPerLoop / 2);
+    }
+
+    void SetPlaybackIndicator(){
+        playbackIndicator.transform.position = Vector3.Lerp(startPos, endPos, playbackTime / totalLoopTime);
+    }
+
+    //this is called when the current beat is set
+    public void SetBeatSounds(){
+        //when this is called, call the SetSound funtion in current beat
+        bars[currentBar].beats[currentBeat % beatsPerBar].SetSound(true);
+    }
+
+    public void OnBeat(){
+        currentBar = currentBeat / beatsPerBar;
+        //currentBeat ++;
+        //Debug.Log("Current beat: " + currentBeat);
+        //play all the beats in EA_Bar
+        bars[currentBar].OnBeat(currentBeat % beatsPerBar);
+        if(lastBar != currentBar){
+            bars[lastBar].OnReset();
+            lastBar = currentBar;
         }
+    }
 
-        //add self to total sequencers in EA_SequenceManager
-        EA_SequenceManager.s.sequencers.Add(this);
-
+    public void OnReset(){
+        foreach(EA_Bar bar in bars){
+            bar.OnReset();
+        }
     }
 }
 
