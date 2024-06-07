@@ -27,6 +27,13 @@ public class H_DetectCollision : MonoBehaviour
             collidingObject = collision.gameObject;
             collisionEnterEvent?.Invoke();
         }
+
+        //call the CollisionEvent that can be overriden by children scripts
+        CollisionEvent();
+    }
+
+    protected virtual void CollisionEvent(){
+        Debug.Log("Collision Event");
     }
 
     private void OnCollisionExit(Collision collision)

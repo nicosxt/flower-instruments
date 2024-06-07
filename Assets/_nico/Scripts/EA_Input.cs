@@ -66,7 +66,8 @@ public class EA_Input : MonoBehaviour
             }
             rb.isKinematic = true;
             rb.useGravity = false;
-            
+            //change tag of gameObject of the colliders
+            capsule.CapsuleCollider.gameObject.tag = "XRHand";
         }
 
         if(skeletonColliders.Count > 0){
